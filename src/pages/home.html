@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css"> <!-- Caminho relativo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- CSS do Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JS do Bootstrap 5 e Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Importação dos arquivos JavaScript -->
+    <script type="module" src="../js/script.js" defer></script>
+    <script type="module" src="../js/dinamic.js" defer></script>
+    
+    <!-- Bibliotecas externas -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
+    <title>Home</title>
+</head>
+
+
+<body>
+    <div class="main">
+        <div class="center">
+            <img src="../images/tree.png" alt="imagem" style="width: 15%;">
+        </div>
+        <div class="tool__header">
+            <h1 class="tool__header__title">Recomendação de adubação e calagem</h1>
+            <h2 class="tool__header__subtitle">Cálculo do tipo e quantidade de calcário a ser aplicado para correção do
+                solo</h2>
+        </div>
+        <div id="selectOptions">
+            <div class="input-group">
+                <select class="form-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+                    <option selected>Por favor, selecione como deseja importar seus dados</option>
+                    <option value="1">Inserir Dados</option>
+                    <option value="2">Importar PDF</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="pdfDiv" class="input-group" style="margin-top: 10px; display:none;">
+            <input type="file" class="form-control" id="file-input" aria-describedby="inputGroupFileAddon04"
+                aria-label="Upload" accept="application/pdf">
+            <div id="pdf-text"></div>
+            <button class="btn btn-outline-primary" type="button" id="inputGroupFileAddon04"
+                onclick="processar()">Processar</button>
+        </div>
+
+        <div id="resultDiv" class="input-group" style="display:none;">
+            <div style="display: ruby-text;">
+                <h3>Foram encontrada(s)</h3>
+                <h3 id="amostras"></h3>
+                <h3>amostras</h3>
+            </div>
+            <div id="showAmostras"></div>
+            <button class="btn btn-outline-primary" onclick="location.reload()">Calcular Novamente</button>
+        </div>
+
+        <div class="modal fade" id="detalhesModal" tabindex="-1" aria-labelledby="detalhesModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detalhesModalLabel">Detalhes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="modal-content"></p> <!-- Modal Dinâmico -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="formDiv" class="input-group" style="margin-top: 10px; display: none;">
+            <h2 class="tool__header__subtitle" style="margin-bottom: 10px">Por favor, preencha os dados corretamente</h2>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Fósforo</span>
+                <input type="text" class="form-control" id="fosforo" placeholder="Fósforo">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Potássio</span>
+                <input type="text" class="form-control" id="potassio" placeholder="Potássio">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Cálcio</span>
+                <input type="text" class="form-control" id="calcio" placeholder="Cálcio">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Magnésio</span>
+                <input type="text" class="form-control" id="magnesio" placeholder="Magnésio">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Índice SMP</span>
+                <input type="text" class="form-control" id="indice_smp" placeholder="Índice SMP">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">CTC</span>
+                <input type="text" class="form-control" id="ctc" placeholder="CTC">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Argila</span>
+                <input type="text" class="form-control" id="argila" placeholder="Argila">
+            </div>
+        
+            <div class="input-group mb-3">
+                <span class="input-group-text">Área Plantada</span>
+                <input type="text" class="form-control" id="areaPlantada" placeholder="Área Plantada">
+            </div>
+        
+            <button type="button" class="btn btn-success" onclick="transformarEmJSON()">Transformar em JSON</button>            
+
+        </div>
+
+        <div id="formResultDiv" class="input-group" style="display: none; margin-top: 20px;">
+            <div id="formShowResults" class="result-content"></div>
+        </div>                
+        
+    </div>
+</body>
+
+</html>
